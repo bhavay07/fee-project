@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in || Sign up from</title>
+    <!-- font awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- css stylesheet -->
+    <link rel="stylesheet" href="authenti.css">
+</head>
+
+<body>
+
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form action="#" id="MainForm">
+                <h1>Create Account</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email for registration</span>
+                <div class="infield">
+                    <input type="text" placeholder="Name" id="nameInp" />
+                    <label></label>
+                </div>
+                <div class="infield">
+                    <input type="email" placeholder="Email" name="email" id="emailInp" />
+                    <label></label>
+                </div>
+                <div class="infield">
+                    <input type="password" placeholder="Password" id="passwordInp" />
+                    <label></label>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="#" id="subForm">
+                <h1>Sign in</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your account</span>
+                <div class="infield">
+                    <input type="email" placeholder="Email" name="email" id="signin-email" />
+                    <label></label>
+                </div>
+                <div class="infield">
+                    <input type="password" placeholder="Password" id="signin-pass"/>
+                    <label></label>
+                </div>
+                <a href="#" class="forgot">Forgot your password?</a>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <div class="overlay-container" id="overlayCon">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button>Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>New Here?</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button>Sign Up</button>
+                </div>
+            </div>
+            <button id="overlayBtn"></button>
+        </div>
+    </div>
+    <div class="blob-light"></div>
+
+
+
+    <!-- js code -->
+    <script>
+        const container = document.getElementById('container');
+        const overlayCon = document.getElementById('overlayCon');
+        const overlayBtn = document.getElementById('overlayBtn');
+
+        overlayBtn.addEventListener('click', () => {
+
+            container.classList.toggle('right-panel-active');
+
+            overlayBtn.classList.remove('btnScaled');
+            window.requestAnimationFrame(() => {
+
+                overlayBtn.classList.add('btnScaled');
+            });
+        });
+
+    </script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getDatabase, set, ref, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhKLBS4r9xZHzqo554SeYI1f48kM6MNvk",
+            authDomain: "fir-a797d.firebaseapp.com",
+            databaseURL: "https://fir-a797d-default-rtdb.firebaseio.com",
+            projectId: "fir-a797d",
+            storageBucket: "fir-a797d.appspot.com",
+            messagingSenderId: "871015583264",
+            appId: "1:871015583264:web:d219a290f8a5fc845cb645",
+            measurementId: "G-ETQ8441KLV"
+        };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getDatabase();
+        const auth = getAuth(app);
+        const dbref = ref(db);
+        let EmailInp = document.getElementById('emailInp');
+        let PassInp = document.getElementById('passwordInp');
+        let signInEmailInp = document.getElementById('signin-email');
+        let signInPassInp = document.getElementById('signin-pass');
+        let nameInp = document.getElementById('nameInp');
+        let MainForm = document.getElementById('MainForm');
+        let subForm = document.getElementById('subForm');
+        let Registeruser = evt => {
+            evt.preventDefault();
+            createUserWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
+                .then((Credentials) => {
+                    set(ref(db, 'userAuthList/' + Credentials.user.uid), {
+                        name: nameInp.value
+                    })
+                })
+                .catch((error) => {
+                    alert(error.message);
+                    console.log(error.code);
+                    console.log(error.message);
+                })
+        }
+
+        MainForm.addEventListener('submit', Registeruser)
+
+        let signInUser = evt => {
+            evt.preventDefault();
+            console.log(signInEmailInp.value)
+            console.log(signInPassInp.value)
+            signInWithEmailAndPassword(auth, signInEmailInp.value, signInPassInp.value)
+            .catch((error) => {
+                    alert(error.message);
+                    console.log(error.code);
+                    console.log(error.message);})
+                .then((Credentials) => {
+                    console.log(Credentials);
+                    get(child(dbref, 'usersAuthList/' + Credentials.user.uid)).then((snapshot) => {
+                        if (snapshot.exists) {
+                            console.log(snapshot);
+                           // sessionStorage.setItem("user-info",
+                            //JSON.stringify({ name: snapshot.val().EmailInp }))
+                            window.location.href = 'http://localhost:5173/';
+                        }
+                    })
+                })
+
+        }   
+        subForm.addEventListener('submit', signInUser)
+
+    </script>
+
+</body>
+
+</html>
